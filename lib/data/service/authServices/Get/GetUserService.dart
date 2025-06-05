@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 
 class AuthGetServices {
   UserModel _userModel = UserModel("N/A", "N/A", "N/A", "N/A", "N/A", null, "N/A");
-
   UserModel get userData => _userModel;
 
   Future<UserModel?> getUserInfo(String userId) async {
