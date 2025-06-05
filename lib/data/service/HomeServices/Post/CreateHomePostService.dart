@@ -5,7 +5,7 @@ import 'package:flutterlearn/data/model/HomeModel/homeModel.dart';
 import 'package:http/http.dart' as http;
 
 class HomePostService {
-  HomeModel _homeModel = HomeModel(null, null, 0.0, 0.0, null, null);
+  final HomeModel _homeModel = HomeModel();
 
   HomeModel get homePostData => _homeModel;
 

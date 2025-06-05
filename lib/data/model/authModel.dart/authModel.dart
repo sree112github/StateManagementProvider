@@ -1,7 +1,4 @@
-
-
 class UserModel {
-
   String? userId;
   String? userName;
   String? password;
@@ -10,29 +7,32 @@ class UserModel {
   DateTime? userCreatedAt;
   String? userCreationMessage;
 
-  UserModel(this.userId,this.userName,this.password,this.userEmail,this.userPhotoUrl,this.userCreatedAt,this.userCreationMessage);
-
+  UserModel({
+    this.userId,
+    this.userName,
+    this.password,
+    this.userEmail,
+    this.userPhotoUrl,
+    this.userCreatedAt,
+    this.userCreationMessage,
+  });
 
   Map<String, dynamic> toJson() {
     return {
-      "username": userName,    // note lowercase 'username'
+      "username": userName,    // backend expects lowercase 'username'
       "password": password,
     };
   }
 
-  factory UserModel.fromJson(Map<String,dynamic> json, {required String message}){
+  factory UserModel.fromJson(Map<String, dynamic> json, {required String message}) {
     return UserModel(
-      json['userId'],
-      json['username'],
-      null, // Don't return password from API
-      json['userEmail'],
-      json['userPhotourl'],
-      json['userCreatedAt'] != null ? DateTime.tryParse(json['userCreatedAt']) : null,
-      message
-
+      userId: json['userId'],
+      userName: json['username'],
+      password: null, // Don't return password from API
+      userEmail: json['userEmail'],
+      userPhotoUrl: json['userPhotourl'], // make sure backend uses this exact key
+      userCreatedAt: json['userCreatedAt'] != null ? DateTime.tryParse(json['userCreatedAt']) : null,
+      userCreationMessage: message,
     );
-
-    }
   }
-
-
+}

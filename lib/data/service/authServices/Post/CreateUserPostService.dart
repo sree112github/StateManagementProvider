@@ -4,7 +4,7 @@ import 'package:flutterlearn/data/model/authModel.dart/authModel.dart';
 import 'package:http/http.dart' as http;
 
 class AuthPostService {
-  UserModel _userModel = UserModel(null, null, null, null, null, null, null);
+  UserModel _userModel = UserModel();
 
   UserModel get userData => _userModel;
 

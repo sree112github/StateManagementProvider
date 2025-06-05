@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class HomeGetService {
 
-  HomeModel _homeModel = HomeModel(null, null, 0.0, 0.0, null, null);
+  final HomeModel _homeModel = HomeModel();
 
 
   Future<List<HomeModel>?> getAllHomeInfo(String userId) async {

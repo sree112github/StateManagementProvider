@@ -1,7 +1,3 @@
-
-
-//Top level
-
 class HomeResponseModel {
   final String message;
   final List<HomeModel> data;
@@ -17,9 +13,7 @@ class HomeResponseModel {
     );
   }
 }
-
-
-class HomeModel{
+class HomeModel {
   String? homeId;
   String? homeName;
   double? homeLongitude;
@@ -29,16 +23,16 @@ class HomeModel{
   String? userId;
   int? statusCode;
 
-  HomeModel(
-      this.homeId,
-      this.homeName,
-      this.homeLongitude,
-      this.homeLatitude,
-      this.homePlace,
-      this.homeCreatedAt, {
-        this.userId,
-        this.statusCode,
-      });
+  HomeModel({
+    this.homeId,
+    this.homeName,
+    this.homeLongitude = 0.0,
+    this.homeLatitude = 0.0,
+    this.homePlace,
+    this.homeCreatedAt,
+    this.userId,
+    this.statusCode,
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -52,17 +46,17 @@ class HomeModel{
   }
 
   factory HomeModel.fromJson(Map<String, dynamic> json) {
+    final location = json['location'] is Map<String, dynamic> ? json['location'] : {};
+
     return HomeModel(
-      json['home_id'],
-      json['name'],
-      json['location']['longitude']?.toDouble(),
-      json['location']['latitude']?.toDouble(),
-      null, // homePlace not in response
-      null, // homeCreatedAt not in response
+      homeId: json['home_id'],
+      homeName: json['name'] ?? 'Unnamed Home',
+      homeLongitude: location['longitude']?.toDouble() ?? 2.3,
+      homeLatitude: location['latitude']?.toDouble() ?? 0.0,
+      homePlace: json['place'] ?? 'Unknown Place',
+      homeCreatedAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
+      userId: json['userId'],
+      statusCode: json['statusCode'],
     );
   }
 }
-
-
-
-

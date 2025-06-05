@@ -5,7 +5,7 @@ import 'package:flutterlearn/data/model/authModel.dart/authModel.dart';
 import 'package:http/http.dart' as http;
 
 class AuthGetServices {
-  UserModel _userModel = UserModel("N/A", "N/A", "N/A", "N/A", "N/A", null, "N/A");
+  UserModel _userModel = UserModel();
   UserModel get userData => _userModel;
 
   Future<UserModel?> getUserInfo(String userId) async {
