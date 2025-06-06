@@ -1,0 +1,128 @@
+const express = require('express');
+const app = express();
+const { v4: uuidv4 } = require('uuid');
+const cors = require('cors');
+app.use(cors());
+
+app.use(express.json());
+
+// In-memory data store
+const users = {};
+
+// POST /users - Create a new user
+app.post('/users', (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required' });
+    }
+
+    const userId = uuidv4();
+    const userEmail = `${username.toLowerCase()}@example.com`;
+    const userPhotourl = `https://example.com/photos/${userId}.jpg`;
+    const userCreatedAt = new Date().toISOString();
+
+    const newUser = {
+        userId,
+        username,
+        userEmail,
+        userPhotourl,
+        userCreatedAt,
+        password // stored but not returned
+    };
+
+    users[userId] = newUser;
+
+    // Return only userId and userEmail
+    res.status(201).json({ userId, userEmail });
+});
+
+// GET /users/:id - Get user by ID
+app.get('/users/:id', (req, res) => {
+    const user = users[req.params.id];
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const { userId, username, userEmail, userPhotourl, userCreatedAt } = user;
+    res.json({ userId, username, userEmail, userPhotourl, userCreatedAt });
+});
+
+// In-memory store for homes
+const homes = {};
+
+// POST /homes - Create a new home
+app.post('/homes', (req, res) => {
+    const { name, location, userId } = req.body;
+
+    if (!name || !location || !location.type || !location.coordinates || !userId) {
+        return res.status(400).json({ error: 'Invalid request. Name, location and userId are required.' });
+    }
+
+    // Check if user exists
+    if (!users[userId]) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const homeId = uuidv4();
+
+    const [longitude, latitude] = location.coordinates;
+
+    const newHome = {
+        home_id: homeId,
+        userId,
+        name,
+        location: {
+            latitude,
+            longitude
+        }
+    };
+
+    // Add to in-memory storage
+    if (!homes[userId]) {
+        homes[userId] = [];
+    }
+
+    homes[userId].push(newHome);
+
+    res.status(201).json({
+        message: 'Home created successfully',
+        home_id: homeId
+    });
+});
+
+
+
+// GET /homes/:userId - Get all homes for a user
+app.get('/homes/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    if (!users[userId]) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const userHomes = homes[userId] || [];
+
+    const formattedHomes = userHomes.map(home => ({
+        name: home.name,
+        location: {
+            latitude: home.location.latitude,
+            longitude: home.location.longitude
+        },
+        home_id: home.home_id
+    }));
+
+    res.json({
+        message: 'Home Fetched successfully',
+        data: formattedHomes
+    });
+});
+
+// TODO: Add similar routes for homes, rooms, and devices
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(3000, '0.0.0.0', () => {
+  console.log('Server running on port 3000');
+});
+ 
