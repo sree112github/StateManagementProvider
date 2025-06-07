@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutterlearn/data/model/HomeModel/homeModel.dart';
+import 'package:flutterlearn/data/model/LocationModel/locationModel.dart';
+import 'package:flutterlearn/data/model/MixedModels/HomeResponseModel.dart';
 import 'package:flutterlearn/data/repository/HomeRepository/homeRepository.dart';
 import 'package:provider/provider.dart';
 
@@ -11,29 +13,69 @@ class HomeProvider extends ChangeNotifier {
 
   List<HomeModel> get homesList => _repository.homes;
 
+  HomeResponseModelMix? get homeAverageData => _homeAverageData;
+
+
   //variables
 
-  bool _isloading = false;
+  bool _isLoading = false;
+  PlaceDetails? _currentLocationDetails;
+  HomeResponseModelMix? _homeAverageData;
 
-  bool get isLoading => _isloading;
+  bool get isLoading => _isLoading;
+  PlaceDetails? get currentLocationDetails => _currentLocationDetails;
 
 
   Future<void> createHome(homeName, userId, homeLongitude, homeLatitude) async {
-    _isloading = true;
+    _isLoading = true;
     notifyListeners();
     await _repository.createHome(homeName, userId, homeLongitude, homeLatitude);
     await _repository.getHomeInfo(userId);
-    _isloading = false;
+    _isLoading = false;
     notifyListeners();
   }
 
 
   Future<void> getHomeInfo(userId)async{
-    _isloading = true;
+    _isLoading = true;
     notifyListeners();
     await _repository.getHomeInfo(userId);
-    _isloading = false;
+    _isLoading = false;
     notifyListeners();
   }
 
-}
+
+  Future<HomeResponseModelMix?> getHomeAverageData() async{
+    _isLoading = true;
+    notifyListeners();
+   final homeAverageData= await _repository.getHomeAverageData();
+   if(homeAverageData == null){
+     return null;
+   }
+   _homeAverageData = homeAverageData;
+   _isLoading = false;
+   notifyListeners();
+
+  }
+
+  /// Fetch current location and notify listeners
+  Future<void> fetchCurrentPlace() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final place = await _repository.getLocationInfo();
+      if (place == null) {
+        print("no data found");
+      }
+      _currentLocationDetails = place;
+    } catch (e) {
+     print('Error: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+  }
+
+
